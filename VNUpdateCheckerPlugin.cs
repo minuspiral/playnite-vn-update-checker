@@ -88,6 +88,8 @@ namespace VNUpdateChecker
             return new VNUpdateCheckerSettingsView();
         }
 
+        private const int BatchWarningThreshold = 50;
+
         private void CheckAllGames()
         {
             var games = PlayniteApi.Database.Games
@@ -100,6 +102,17 @@ namespace VNUpdateChecker
                     "批評空間またはVNDBのリンクが登録されたゲームがありません。\n\nゲームの編集画面で「リンク」にURLを追加してください。",
                     "VN Update Checker");
                 return;
+            }
+
+            if (games.Count >= BatchWarningThreshold)
+            {
+                var estimateMinutes = (int)Math.Ceiling(games.Count * 2.5 / 60.0);
+                var confirm = PlayniteApi.Dialogs.ShowMessage(
+                    $"{games.Count}件のゲームをチェックします。\n" +
+                    $"サーバー負荷軽減のため約{estimateMinutes}分かかります。\n\n続行しますか？",
+                    "VN Update Checker",
+                    MessageBoxButton.YesNo);
+                if (confirm != MessageBoxResult.Yes) return;
             }
 
             RunCheckWithProgress(games);
