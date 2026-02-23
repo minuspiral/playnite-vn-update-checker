@@ -1,0 +1,24 @@
+<UserControl x:Class="VNUpdateChecker.VNUpdateCheckerSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Margin="20">
+        <TextBlock Text="VN Update Checker 設定"
+                   FontSize="16" FontWeight="Bold" Margin="0,0,0,15"/>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="キャッシュ有効期間（時間）:" VerticalAlignment="Center" Width="200"/>
+            <TextBox Text="{Binding CacheExpirationHours}"
+                     Width="80" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <Separator Margin="0,10"/>
+
+        <TextBlock Text="情報" FontSize="14" FontWeight="Bold" Margin="0,10,0,5"/>
+        <TextBlock TextWrapping="Wrap" Margin="0,0,0,5">
+            <Run Text="ゲームに批評空間のリンクを登録すると、自動でパッチ情報をチェックできます。"/>
+        </TextBlock>
+        <TextBlock TextWrapping="Wrap" Foreground="Gray">
+            <Run Text="リンクURL例: https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=35825"/>
+        </TextBlock>
+    </StackPanel>
+</UserControl>

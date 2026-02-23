@@ -1,0 +1,10 @@
+Id: VNUpdateChecker_ca82b74c-7220-412a-bce1-94f176482728
+Name: VN Update Checker
+Author: minuspiral
+Version: 1.0.0
+Module: VNUpdateChecker.dll
+Type: GenericPlugin
+Icon: icon.png
+Links:
+  - Name: GitHub
+    Url: https://github.com/minuspiral/playnite-vn-update-checker

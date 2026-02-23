@@ -1,0 +1,22 @@
+## Build output
+bin/
+obj/
+dist/
+
+## IDE
+.vs/
+*.user
+*.suo
+*.DotSettings.user
+_ReSharper.*/
+
+## NuGet
+packages/
+*.nupkg
+
+## OS
+Thumbs.db
+.DS_Store
+
+## Misc
+*.pext

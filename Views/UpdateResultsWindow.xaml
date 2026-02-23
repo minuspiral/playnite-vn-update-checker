@@ -1,0 +1,217 @@
+<UserControl x:Class="VNUpdateChecker.Views.UpdateResultsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+    </UserControl.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="パッチ情報チェック結果"
+                   Foreground="{DynamicResource TextBrush}"
+                   FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <DataGrid Grid.Row="1" x:Name="ResultsGrid"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserSortColumns="True"
+                  SelectionMode="Single"
+                  GridLinesVisibility="None"
+                  HeadersVisibility="Column"
+                  VerticalScrollBarVisibility="Auto"
+                  FontSize="13"
+                  Foreground="{DynamicResource TextBrush}"
+                  Background="{DynamicResource NormalBrushDark}"
+                  RowBackground="Transparent"
+                  AlternatingRowBackground="{x:Null}"
+                  BorderBrush="{DynamicResource NormalBorderBrush}"
+                  BorderThickness="1"
+                  SelectionChanged="ResultsGrid_SelectionChanged">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource NormalBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="6,5"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridCell">
+                                <Border Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}">
+                                    <ContentPresenter VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextBrushDarker}"/>
+                    <Setter Property="Padding" Value="6,6"/>
+                    <Setter Property="FontSize" Value="13"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ゲーム名" Binding="{Binding GameName}" Width="*" MinWidth="150">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="ローカルver" Binding="{Binding LocalVersion}" Width="140">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <!-- 最新ver: 更新がある場合はGlyphBrushでハイライト -->
+                <DataGridTemplateColumn Header="最新ver" Width="90">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding LatestVersion}" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsNewerVersionAvailable}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource GlyphBrush}"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <!-- 状態: 色分け -->
+                <DataGridTemplateColumn Header="状態" Width="170">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding OutcomeText}" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding OutcomeCategory}" Value="warning">
+                                                <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding OutcomeCategory}" Value="positive">
+                                                <Setter Property="Foreground" Value="{DynamicResource PositiveRatingBrush}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding OutcomeCategory}" Value="error">
+                                                <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="確認者" Binding="{Binding PatchUserCountText}" Width="55">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrushDarker}"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="操作" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="批評空間" Click="OpenErogameScape_Click"
+                                        Margin="2" Padding="4,3"
+                                        Visibility="{Binding HasUrl, Converter={StaticResource BoolToVisConverter}}"/>
+                                <Button Content="公式" Click="OpenOfficialSite_Click"
+                                        Margin="2" Padding="4,3"
+                                        Visibility="{Binding HasOfficialSiteUrl, Converter={StaticResource BoolToVisConverter}}"/>
+                                <Button Content="適用済み" Click="Acknowledge_Click"
+                                        Margin="2" Padding="4,3"
+                                        Visibility="{Binding CanAcknowledge, Converter={StaticResource BoolToVisConverter}}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- パッチ詳細パネル -->
+        <GroupBox Grid.Row="2" Header="パッチ詳細" Margin="0,8,0,0"
+                  Foreground="{DynamicResource TextBrush}"
+                  BorderBrush="{DynamicResource NormalBorderBrush}"
+                  x:Name="PatchDetailPanel" Visibility="Collapsed">
+            <ItemsControl x:Name="PatchDetailList" MaxHeight="180"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ItemsControl.Template>
+                    <ControlTemplate TargetType="ItemsControl">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsPresenter/>
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ItemsControl.Template>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{DynamicResource NormalBorderBrush}" BorderThickness="0,0,0,1"
+                                Padding="6" Margin="0,0,0,4">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                                    <TextBlock Text="{Binding TimestampText}" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextBrush}" FontSize="13" Margin="0,0,10,0"/>
+                                    <TextBlock Text="{Binding Author}"
+                                               Foreground="{DynamicResource TextBrushDarker}" FontSize="13"/>
+                                    <TextBlock Text="{Binding VersionText}" Margin="10,0,0,0"
+                                               Foreground="{DynamicResource GlyphBrush}"
+                                               FontWeight="SemiBold" FontSize="13"
+                                               Visibility="{Binding HasVersion, Converter={StaticResource BoolToVisConverter}}"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding Comment}" TextWrapping="Wrap" MaxHeight="60"
+                                           Foreground="{DynamicResource TextBrush}" FontSize="12"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="閉じる" Click="Close_Click" Padding="20,7" FontSize="13" MinWidth="80"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

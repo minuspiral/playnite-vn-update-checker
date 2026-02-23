@@ -1,0 +1,111 @@
+<UserControl x:Class="VNUpdateChecker.Views.SingleGameResultView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ステータス情報 -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="状態"
+                       Foreground="{DynamicResource TextBrushDarker}"
+                       FontSize="15" Margin="0,0,20,8" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="OutcomeText"
+                       Foreground="{DynamicResource TextBrush}"
+                       FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="ローカルver"
+                       Foreground="{DynamicResource TextBrushDarker}"
+                       FontSize="15" Margin="0,0,20,6" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LocalVersionText"
+                       Foreground="{DynamicResource TextBrush}"
+                       FontSize="15" Margin="0,0,0,6"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="最新ver"
+                       Foreground="{DynamicResource TextBrushDarker}"
+                       FontSize="15" Margin="0,0,20,6" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LatestVersionText"
+                       Foreground="{DynamicResource TextBrush}"
+                       FontSize="15" Margin="0,0,0,6"/>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="確認者"
+                       Foreground="{DynamicResource TextBrushDarker}"
+                       FontSize="15" Margin="0,0,20,0" VerticalAlignment="Center"
+                       x:Name="UserCountLabel"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="UserCountText"
+                       Foreground="{DynamicResource TextBrush}" FontSize="15"/>
+        </Grid>
+
+        <!-- 区切り線 -->
+        <Border Grid.Row="1" BorderBrush="{DynamicResource NormalBorderBrush}"
+                BorderThickness="0,1,0,0" Margin="0,0,0,10"
+                x:Name="PatchDetailSeparator" Visibility="Collapsed"/>
+
+        <!-- パッチ詳細 -->
+        <ItemsControl Grid.Row="2" x:Name="PatchDetailList"
+                      Visibility="Collapsed"
+                      Margin="0,0,0,10">
+            <ItemsControl.Template>
+                <ControlTemplate TargetType="ItemsControl">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="250">
+                        <ItemsPresenter/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ItemsControl.Template>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="{DynamicResource NormalBorderBrush}"
+                            BorderThickness="0,0,0,1" Padding="6" Margin="0,0,0,4">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                                <TextBlock Text="{Binding TimestampText}" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextBrush}" FontSize="13" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding Author}"
+                                           Foreground="{DynamicResource TextBrushDarker}" FontSize="13"/>
+                                <TextBlock Text="{Binding VersionText}" Margin="10,0,0,0"
+                                           Foreground="{DynamicResource GlyphBrush}"
+                                           FontWeight="SemiBold" FontSize="13"
+                                           Visibility="{Binding HasVersion, Converter={StaticResource BoolToVis}}"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding Comment}" TextWrapping="Wrap" MaxHeight="60"
+                                       Foreground="{DynamicResource TextBrush}" FontSize="12"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- ボタン -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="公式サイトを開く" Click="OpenOfficialSite_Click"
+                    Margin="0,0,8,0" Padding="14,7" FontSize="13"
+                    x:Name="OpenOfficialButton" Visibility="Collapsed"/>
+            <Button Content="批評空間を開く" Click="OpenErogameScape_Click"
+                    Margin="0,0,8,0" Padding="14,7" FontSize="13"
+                    x:Name="OpenUrlButton" Visibility="Collapsed"/>
+            <Button Content="適用済みにする" Click="Acknowledge_Click"
+                    Margin="0,0,8,0" Padding="14,7" FontSize="13"
+                    x:Name="AcknowledgeButton" Visibility="Collapsed"/>
+            <Button Content="閉じる" Click="Close_Click" Padding="14,7" FontSize="13" MinWidth="70"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
