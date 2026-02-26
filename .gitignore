@@ -20,3 +20,6 @@ Thumbs.db
 
 ## Misc
 *.pext
+
+## Claude Code
+.claude/
